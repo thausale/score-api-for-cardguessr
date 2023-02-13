@@ -3,6 +3,18 @@ const app = express();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "http://cardguessr.cnopssyntra.surge.sh"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 let scores = [];
 
 app.post("/scores", (req, res) => {
