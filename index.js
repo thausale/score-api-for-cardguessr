@@ -1,6 +1,7 @@
 import express from "express";
-const app = express();
+import mysql from "mysql2";
 
+const app = express();
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -15,21 +16,44 @@ app.use((req, res, next) => {
   next();
 });
 
-let scores = [];
+const connection = mysql.createConnection({
+  host: "ID396978_watergroep.db.webhosting.be",
+  user: "ID396978_watergroep",
+  password: "88rb89L64lBYWC209C3o",
+  database: "ID396978_watergroep",
+});
+
+connection.connect((error) => {
+  if (error) throw error;
+  console.log("Connected to MySQL database");
+});
 
 app.post("/scores", (req, res) => {
-  scores.push(req.body.score);
-  res.send({ message: "Score saved successfully!" });
+  connection.query(
+    "INSERT INTO scores (score) VALUES (?)",
+    [req.body.score],
+    (error, results) => {
+      if (error) throw error;
+      res.send({ message: "Score saved successfully!" });
+    }
+  );
 });
 
 app.get("/scores", (req, res) => {
-  res.send({ scores });
+  connection.query("SELECT * FROM scores", (error, results) => {
+    if (error) throw error;
+    res.send({ scores: results });
+  });
 });
 
 app.get("/average", (req, res) => {
-  let sum = scores.reduce((a, b) => a + b, 0);
-  let average = sum / scores.length;
-  res.send({ average });
+  connection.query(
+    "SELECT AVG(score) as average FROM scores",
+    (error, results) => {
+      if (error) throw error;
+      res.send({ average: results[0].average });
+    }
+  );
 });
 
 app.listen(3000, () => {
