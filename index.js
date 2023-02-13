@@ -10,6 +10,10 @@ app.post("/scores", (req, res) => {
   res.send({ message: "Score saved successfully!" });
 });
 
+app.get("/scores", (req, res) => {
+  res.send({ scores });
+});
+
 app.get("/average", (req, res) => {
   let sum = scores.reduce((a, b) => a + b, 0);
   let average = sum / scores.length;
