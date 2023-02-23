@@ -30,7 +30,7 @@ connection.connect((error) => {
 
 app.post("/scores", (req, res) => {
   connection.query(
-    "INSERT INTO scores (score) VALUES (?)",
+    "INSERT INTO scores (score, created_at) VALUES (?, NOW())",
     [req.body.score],
     (error, results) => {
       if (error) throw error;
